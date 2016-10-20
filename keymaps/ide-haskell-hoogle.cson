@@ -1,4 +1,4 @@
 'atom-text-editor':
   'f1': 'ide-haskell-hoogle:show-doc-for-symbol'
   'shift-f1': 'ide-haskell-hoogle:search-for-symbol'
-  'ctrl-f2': 'ide-haskell-hoogle:search-for-symbol-exact'
+  'ctrl-f1': 'ide-haskell-hoogle:search-for-symbol-exact'
