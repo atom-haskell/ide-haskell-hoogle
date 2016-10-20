@@ -17,7 +17,8 @@ class HoogleDocView
     @element = document.createElement 'div'
     @element.classList.add('ide-haskell-hoogle')
     @element.appendChild @outputDiv = document.createElement 'div'
-    @outputDiv.classList.add('ide-haskell-hoogle-output', 'editor', 'editor-colors')
+    @outputDiv.classList.add('ide-haskell-hoogle-output', 'editor', 'editor-colors', 'native-key-bindings')
+    @outputDiv.tabIndex = -1
     @disposables.add atom.config.observe 'editor.fontSize', (fontSize) =>
       if fontSize?
         @outputDiv.style.fontSize = "#{fontSize}px"
