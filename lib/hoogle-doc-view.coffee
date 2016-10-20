@@ -2,9 +2,7 @@ SubAtom = require 'sub-atom'
 {Range, Emitter} = require 'atom'
 Util = require 'atom-haskell-utils'
 
-Highlights = require 'highlights'
-
-termEscapeRx = /\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]/g
+highlightSync = require './highlight'
 
 module.exports =
 class HoogleDocView
@@ -26,8 +24,6 @@ class HoogleDocView
       if fontFamily
         @outputDiv.style.fontFamily = fontFamily
 
-    @highlighter = new Highlights(registry: atom.grammars)
-
   getURI: ->
     "ide-haskell://hoogle/doc/"
 
@@ -46,8 +42,25 @@ class HoogleDocView
   showDocFor: (s, e, i) ->
     @hoogle.getDocForSymbol(s, e, i)
     .then (doc) =>
-      @highlighter.highlight {fileContents: doc, scopeName: 'text.tex.latex.haskell'},
-        (err, html) =>
-          console.error(err) if err
-          @outputDiv.innerHTML = html.replace(/&nbsp;/g, ' ') if html?
-          @outputDiv.innerHTML = @outputDiv.firstElementChild.innerHTML
+      hl = (lines, scope) ->
+        html = highlightSync {fileContents: lines.join('\n'), scopeName: scope}
+        if scope is 'text.plain'
+          return html
+        else
+          return "<pre class=\"editor editor-colors\">#{html}</pre>"
+      reduce = ({acc, prev, span}, el) ->
+        newPrev = el.startsWith('> ')
+        if newPrev
+          el = el.slice(2)
+        scope = if prev then 'source.haskell' else 'text.plain'
+        if newPrev is prev
+          {acc, span: [span..., el], prev: newPrev}
+        else
+          {acc: [acc..., hl(span, scope)], span: [el], prev: newPrev}
+      {acc, span, prev} = doc.reduce(reduce, {acc: [], span: [], prev: false})
+      reduced =
+        if prev
+          [acc..., hl(span, 'source.haskell')]
+        else
+          [acc..., hl(span, 'text.plain')]
+      @outputDiv.innerHTML = reduced.join('')

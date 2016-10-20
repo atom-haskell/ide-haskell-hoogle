@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "sub-atom": "^1.0.0",
-    "highlights": "^1.4.1",
+    "underscore-plus": "^1.6.6",
     "atom-space-pen-views": "^2.0.3"
   }
 }

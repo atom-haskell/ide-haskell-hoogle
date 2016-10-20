@@ -60,6 +60,6 @@ class Hoogle
       if mod[0].toUpperCase() is mod[0]
         mod = "> module #{mod} where"
       if match?
-        ["#{match} match", mod, "> #{signature}", rest...].join('\n')
+        ["#{match} match", mod, "> #{signature}", rest...]
       else
-        return lines.join('\n')
+        return lines

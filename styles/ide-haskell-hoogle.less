@@ -9,9 +9,13 @@ div.ide-haskell-hoogle {
   .ide-haskell-hoogle-output {
     overflow-y: scroll;
     height: 100%;
-    white-space: pre-wrap;
-    .line .meta.embedded.haskell {
-      white-space: pre;
+    .line {
+      white-space: pre-wrap;
+      min-height: 1em;
+    }
+    pre {
+      font-size: inherit;
+      font-family: inherit;
     }
   }
 }
