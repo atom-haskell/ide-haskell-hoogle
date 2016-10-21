@@ -57,10 +57,27 @@ class HoogleDocView
           {acc, span: [span..., el], prev: newPrev}
         else
           {acc: [acc..., hl(span, scope)], span: [el], prev: newPrev}
-      {acc, span, prev} = doc.reduce(reduce, {acc: [], span: [], prev: false})
+      {acc, span, prev} = doc.lines.reduce(reduce, {acc: [], span: [], prev: false})
       reduced =
         if prev
           [acc..., hl(span, 'source.haskell')]
         else
           [acc..., hl(span, 'text.plain')]
       @outputDiv.innerHTML = reduced.join('')
+
+      if doc.href?
+        link = document.createElement('a')
+        link.innerText = 'Open web documentation'
+        link.classList.add 'btn', 'btn-default'
+        @outputDiv.appendChild link
+        @disposables.add link, 'click', ->
+          atom.workspace.open "ide-haskell://hoogle/web/",
+            searchAllPanes: true
+            activatePane: false
+            src: doc.href
+
+        link2 = document.createElement('a')
+        link2.innerText = 'Open web documentation in browser'
+        link2.href = doc.href
+        link2.classList.add 'btn', 'btn-default'
+        @outputDiv.appendChild link2

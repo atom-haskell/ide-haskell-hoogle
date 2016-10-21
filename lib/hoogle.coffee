@@ -56,10 +56,10 @@ class Hoogle
     .then (lines) ->
       [first, rest..., last, empty] = lines
       [mod, signature...] = first.split(' ')
-      [signature, match] = signature.join(' ').split(' -- ')
+      [signature, match, href] = signature.join(' ').split(' -- ')
       if mod[0].toUpperCase() is mod[0]
         mod = "> module #{mod} where"
       if match?
-        ["#{match} match", mod, "> #{signature}", rest...]
+        {href, lines: ["#{match} match", mod, "> #{signature}", rest...]}
       else
-        return lines
+        {lines}

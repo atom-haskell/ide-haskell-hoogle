@@ -7,6 +7,12 @@ module.exports = IdeHaskellHoogle =
       Path to hoogle executable
       '''
       order: 10
+    webZoomFactor:
+      type: 'integer'
+      description: 'Zoom factor for web view, in %'
+      default: 100
+      minimum: 50
+      maximum: 300
   activate: (state) ->
     {CompositeDisposable} = require 'atom'
     @disposables = new CompositeDisposable
@@ -15,14 +21,24 @@ module.exports = IdeHaskellHoogle =
     @hoogle = new Hoogle()
 
     @disposables.add atom.workspace.addOpener (uriToOpen, options) =>
-      m = uriToOpen.match(/^ide-haskell:\/\/hoogle\/doc\/(.*)$/)
+      m = uriToOpen.match(/^ide-haskell:\/\/hoogle\/(doc|web)\/(.*)$/)
       unless m? and m[1]?
         return
-      pathname = m[1]
+      switch m[1]
+        when 'doc'
+          HoogleDocView = require './hoogle-doc-view'
+          view = new HoogleDocView(@hoogle)
+          return view
+        when 'web'
+          HoogleWebView = require './hoogle-web-view'
+          view = new HoogleWebView(options.src)
+          return view
 
-      HoogleDocView = require './hoogle-doc-view'
-      view = new HoogleDocView(@hoogle)
-      return view
+    @disposables.add atom.commands.add 'webview.ide-haskell-hoogle-web',
+      'ide-haskell-hoogle:web-go-back': ({target}) ->
+        target.goBack()
+      'ide-haskell-hoogle:web-go-forward': ({target}) ->
+        target.goForward()
 
     @disposables.add atom.commands.add 'atom-text-editor',
       'ide-haskell-hoogle:show-doc-for-symbol':  ({target}) =>
@@ -68,11 +84,18 @@ module.exports = IdeHaskellHoogle =
       ]
     ]
 
-  open: (editor) ->
+  open: ->
     atom.workspace.open "ide-haskell://hoogle/doc/",
       split: 'right'
       searchAllPanes: true
       activatePane: false
+
+  openWeb: (href) ->
+    atom.workspace.open "ide-haskell://hoogle/web/",
+      split: 'right'
+      searchAllPanes: true
+      activatePane: false
+      src: href
 
   deactivate: ->
     @hoogle = null
