@@ -1,15 +1,12 @@
 SubAtom = require 'sub-atom'
-{Range, Emitter} = require 'atom'
-Util = require 'atom-haskell-utils'
-
 highlightSync = require './highlight'
 
 module.exports =
 class HoogleDocView
-  constructor: (@hoogle) ->
+  atom.deserializers.add(this)
+  constructor: (@doc) ->
     # Create root element
     @disposables = new SubAtom
-    @disposables.add @emitter = new Emitter
 
     # Create message element
     @element = document.createElement 'div'
@@ -24,60 +21,62 @@ class HoogleDocView
       if fontFamily
         @outputDiv.style.fontFamily = fontFamily
 
+    @showDoc(@doc)
+
   getURI: ->
     "ide-haskell://hoogle/doc/"
 
   getTitle: ->
     "Hoogle doc"
 
-  onDidDestroy: (callback) ->
-    @emitter.on 'did-destroy', callback
-
   destroy: ->
-    @ghci?.destroy?()
     @element.remove()
-    @emitter.emit 'did-destroy'
     @disposables.dispose()
 
-  showDocFor: (s, e, i) ->
-    @hoogle.getDocForSymbol(s, e, i)
-    .then (doc) =>
-      hl = (lines, scope) ->
-        html = highlightSync {fileContents: lines.join('\n'), scopeName: scope}
-        if scope is 'text.plain'
-          return html
-        else
-          return "<pre class=\"editor editor-colors\">#{html}</pre>"
-      reduce = ({acc, prev, span}, el) ->
-        newPrev = el.startsWith('> ')
-        if newPrev
-          el = el.slice(2)
-        scope = if prev then 'source.haskell' else 'text.plain'
-        if newPrev is prev
-          {acc, span: [span..., el], prev: newPrev}
-        else
-          {acc: [acc..., hl(span, scope)], span: [el], prev: newPrev}
-      {acc, span, prev} = doc.lines.reduce(reduce, {acc: [], span: [], prev: false})
-      reduced =
-        if prev
-          [acc..., hl(span, 'source.haskell')]
-        else
-          [acc..., hl(span, 'text.plain')]
-      @outputDiv.innerHTML = reduced.join('')
+  showDoc: (doc) ->
+    hl = (lines, scope) ->
+      html = highlightSync {fileContents: lines.join('\n'), scopeName: scope}
+      if scope is 'text.plain'
+        return html
+      else
+        return "<pre class=\"editor editor-colors\">#{html}</pre>"
+    reduce = ({acc, prev, span}, el) ->
+      newPrev = el.startsWith('> ')
+      if newPrev
+        el = el.slice(2)
+      scope = if prev then 'source.haskell' else 'text.plain'
+      if newPrev is prev
+        {acc, span: [span..., el], prev: newPrev}
+      else
+        {acc: [acc..., hl(span, scope)], span: [el], prev: newPrev}
+    {acc, span, prev} = doc.lines.reduce(reduce, {acc: [], span: [], prev: false})
+    reduced =
+      if prev
+        [acc..., hl(span, 'source.haskell')]
+      else
+        [acc..., hl(span, 'text.plain')]
+    @outputDiv.innerHTML = reduced.join('')
 
-      if doc.href?
-        link = document.createElement('a')
-        link.innerText = 'Open web documentation'
-        link.classList.add 'btn', 'btn-default'
-        @outputDiv.appendChild link
-        @disposables.add link, 'click', ->
-          atom.workspace.open "ide-haskell://hoogle/web/",
-            searchAllPanes: true
-            activatePane: false
-            src: doc.href
+    if doc.href?
+      link = document.createElement('a')
+      link.innerText = 'Open web documentation'
+      link.classList.add 'btn', 'btn-default'
+      @outputDiv.appendChild link
+      @disposables.add link, 'click', ->
+        atom.workspace.open "ide-haskell://hoogle/web/",
+          searchAllPanes: true
+          activatePane: false
+          src: doc.href
 
-        link2 = document.createElement('a')
-        link2.innerText = 'Open web documentation in browser'
-        link2.href = doc.href
-        link2.classList.add 'btn', 'btn-default'
-        @outputDiv.appendChild link2
+      link2 = document.createElement('a')
+      link2.innerText = 'Open web documentation in browser'
+      link2.href = doc.href
+      link2.classList.add 'btn', 'btn-default'
+      @outputDiv.appendChild link2
+
+  serialize: ->
+    deserializer: 'HoogleDocView'
+    doc: @doc
+
+  @deserialize: ({doc}) ->
+    new HoogleDocView(doc)

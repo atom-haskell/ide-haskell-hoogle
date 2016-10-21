@@ -20,14 +20,14 @@ module.exports = IdeHaskellHoogle =
     Hoogle = require './hoogle'
     @hoogle = new Hoogle()
 
-    @disposables.add atom.workspace.addOpener (uriToOpen, options) =>
+    @disposables.add atom.workspace.addOpener (uriToOpen, options) ->
       m = uriToOpen.match(/^ide-haskell:\/\/hoogle\/(doc|web)\/(.*)$/)
       unless m? and m[1]?
         return
       switch m[1]
         when 'doc'
           HoogleDocView = require './hoogle-doc-view'
-          view = new HoogleDocView(@hoogle)
+          view = new HoogleDocView(options.doc)
           return view
         when 'web'
           HoogleWebView = require './hoogle-web-view'
@@ -45,9 +45,8 @@ module.exports = IdeHaskellHoogle =
         ed = target.getModel()
         symbol = ed.tokenForBufferPosition(ed.getLastCursor().getBufferPosition())?.value
         if symbol?
-          @open()
-          .then (model) ->
-            model.showDocFor(symbol, true)
+          @hoogle.getDocForSymbol(symbol, true)
+          .then (doc) => @openDoc(doc)
       'ide-haskell-hoogle:search-for-symbol':  ({target}) =>
         ed = target.getModel()
         symbol = ed.tokenForBufferPosition(ed.getLastCursor().getBufferPosition())?.value
@@ -58,9 +57,8 @@ module.exports = IdeHaskellHoogle =
             new ListView
               items: symbols
               onConfirmed: ({index}) =>
-                @open()
-                .then (model) ->
-                  model.showDocFor(symbol, false, index)
+                @hoogle.getDocForSymbol(symbol, false, index)
+                .then (doc) => @openDoc(doc)
       'ide-haskell-hoogle:search-for-symbol-exact':  ({target}) =>
         ed = target.getModel()
         symbol = ed.tokenForBufferPosition(ed.getLastCursor().getBufferPosition())?.value
@@ -71,9 +69,8 @@ module.exports = IdeHaskellHoogle =
             new ListView
               items: symbols
               onConfirmed: ({index}) =>
-                @open()
-                .then (model) ->
-                  model.showDocFor(symbol, true, index)
+                @hoogle.getDocForSymbol(symbol, true, index)
+                .then (doc) => @openDoc(doc)
 
 
     @disposables.add atom.menu.add [
@@ -84,11 +81,12 @@ module.exports = IdeHaskellHoogle =
       ]
     ]
 
-  open: ->
+  openDoc: (doc) ->
     atom.workspace.open "ide-haskell://hoogle/doc/",
       split: 'right'
       searchAllPanes: true
       activatePane: false
+      doc: doc
 
   openWeb: (href) ->
     atom.workspace.open "ide-haskell://hoogle/web/",

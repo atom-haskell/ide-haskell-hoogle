@@ -1,15 +1,11 @@
 SubAtom = require 'sub-atom'
-{Range, Emitter} = require 'atom'
-Util = require 'atom-haskell-utils'
-
-highlightSync = require './highlight'
 
 module.exports =
 class HoogleWebView
+  atom.deserializers.add(this)
   constructor: (src) ->
     # Create root element
     @disposables = new SubAtom
-    @disposables.add @emitter = new Emitter
 
     # Create message element
     @element = document.createElement 'div'
@@ -42,11 +38,13 @@ class HoogleWebView
   getTitle: ->
     "Hoogle web"
 
-  onDidDestroy: (callback) ->
-    @emitter.on 'did-destroy', callback
-
   destroy: ->
-    @ghci?.destroy?()
     @element.remove()
-    @emitter.emit 'did-destroy'
     @disposables.dispose()
+
+  serialize: ->
+    deserializer: 'HoogleWebView'
+    src: @webView.getURL()
+
+  @deserialize: ({src}) ->
+    new HoogleWebView(src)
