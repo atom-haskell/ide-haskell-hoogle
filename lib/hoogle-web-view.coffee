@@ -2,8 +2,7 @@ SubAtom = require 'sub-atom'
 
 module.exports =
 class HoogleWebView
-  atom.deserializers.add(this)
-  constructor: (src) ->
+  constructor: ({src}) ->
     # Create root element
     @disposables = new SubAtom
 
@@ -45,6 +44,3 @@ class HoogleWebView
   serialize: ->
     deserializer: 'HoogleWebView'
     src: @webView.getURL()
-
-  @deserialize: ({src}) ->
-    new HoogleWebView(src)

@@ -3,8 +3,7 @@ highlightSync = require './highlight'
 
 module.exports =
 class HoogleDocView
-  atom.deserializers.add(this)
-  constructor: (@doc) ->
+  constructor: ({@doc}) ->
     # Create root element
     @disposables = new SubAtom
 
@@ -36,7 +35,7 @@ class HoogleDocView
   showDoc: (doc) ->
     hl = (lines, scope) ->
       html = highlightSync {fileContents: lines.join('\n'), scopeName: scope}
-      if scope is 'text.plain'
+      if scope is 'text.plain.null-grammar'
         return html
       else
         return "<pre class=\"editor editor-colors\">#{html}</pre>"
@@ -44,7 +43,7 @@ class HoogleDocView
       newPrev = el.startsWith('> ')
       if newPrev
         el = el.slice(2)
-      scope = if prev then 'source.haskell' else 'text.plain'
+      scope = if prev then 'source.haskell' else 'text.plain.null-grammar'
       if newPrev is prev
         {acc, span: [span..., el], prev: newPrev}
       else
@@ -54,7 +53,7 @@ class HoogleDocView
       if prev
         [acc..., hl(span, 'source.haskell')]
       else
-        [acc..., hl(span, 'text.plain')]
+        [acc..., hl(span, 'text.plain.null-grammar')]
     @outputDiv.innerHTML = reduced.join('')
 
     if doc.href?
@@ -77,6 +76,3 @@ class HoogleDocView
   serialize: ->
     deserializer: 'HoogleDocView'
     doc: @doc
-
-  @deserialize: ({doc}) ->
-    new HoogleDocView(doc)

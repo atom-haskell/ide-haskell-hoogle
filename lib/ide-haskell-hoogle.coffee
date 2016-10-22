@@ -17,6 +17,18 @@ module.exports = IdeHaskellHoogle =
     {CompositeDisposable} = require 'atom'
     @disposables = new CompositeDisposable
 
+    atom.packages.onDidTriggerActivationHook 'language-haskell:grammar-used', =>
+      @reallyActivate(state)
+
+  createDocView: ({doc}) ->
+    HoogleDocView = require './hoogle-doc-view'
+    view = new HoogleDocView({doc})
+
+  createWebView: ({src}) ->
+    HoogleWebView = require './hoogle-web-view'
+    view = new HoogleWebView({src})
+
+  reallyActivate: (state) ->
     Hoogle = require './hoogle'
     @hoogle = new Hoogle()
 
@@ -26,13 +38,9 @@ module.exports = IdeHaskellHoogle =
         return
       switch m[1]
         when 'doc'
-          HoogleDocView = require './hoogle-doc-view'
-          view = new HoogleDocView(options.doc)
-          return view
+          IdeHaskellHoogle.createDocView(options)
         when 'web'
-          HoogleWebView = require './hoogle-web-view'
-          view = new HoogleWebView(options.src)
-          return view
+          IdeHaskellHoogle.createWebView(options)
 
     @disposables.add atom.commands.add 'webview.ide-haskell-hoogle-web',
       'ide-haskell-hoogle:web-go-back': ({target}) ->
