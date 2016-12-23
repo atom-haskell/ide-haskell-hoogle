@@ -13,7 +13,7 @@
   "repository": "https://github.com/atom-haskell/ide-haskell-hoogle",
   "license": "MIT",
   "engines": {
-    "atom": ">=1.9.0 <2.0.0"
+    "atom": ">=1.13.0 <2.0.0"
   },
   "dependencies": {
     "sub-atom": "^1.0.0",
