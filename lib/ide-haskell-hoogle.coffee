@@ -43,20 +43,20 @@ module.exports = IdeHaskellHoogle =
           IdeHaskellHoogle.createWebView(options)
 
     @disposables.add atom.commands.add 'webview.ide-haskell-hoogle-web',
-      'ide-haskell-hoogle:web-go-back': ({target}) ->
-        target.goBack()
-      'ide-haskell-hoogle:web-go-forward': ({target}) ->
-        target.goForward()
+      'ide-haskell-hoogle:web-go-back': ({currentTarget}) ->
+        currentTarget.goBack()
+      'ide-haskell-hoogle:web-go-forward': ({currentTarget}) ->
+        currentTarget.goForward()
 
     @disposables.add atom.commands.add 'atom-text-editor',
-      'ide-haskell-hoogle:show-doc-for-symbol':  ({target}) =>
-        ed = target.getModel()
+      'ide-haskell-hoogle:show-doc-for-symbol':  ({currentTarget}) =>
+        ed = currentTarget.getModel()
         symbol = ed.tokenForBufferPosition(ed.getLastCursor().getBufferPosition())?.value
         if symbol?
           @hoogle.getDocForSymbol(symbol, true)
           .then (doc) => @openDoc(doc)
-      'ide-haskell-hoogle:search-for-symbol':  ({target}) =>
-        ed = target.getModel()
+      'ide-haskell-hoogle:search-for-symbol':  ({currentTarget}) =>
+        ed = currentTarget.getModel()
         symbol = ed.tokenForBufferPosition(ed.getLastCursor().getBufferPosition())?.value
         if symbol?
           @hoogle.searchForSymbol(symbol)
@@ -67,8 +67,8 @@ module.exports = IdeHaskellHoogle =
               onConfirmed: ({index}) =>
                 @hoogle.getDocForSymbol(symbol, false, index)
                 .then (doc) => @openDoc(doc)
-      'ide-haskell-hoogle:search-for-symbol-exact':  ({target}) =>
-        ed = target.getModel()
+      'ide-haskell-hoogle:search-for-symbol-exact':  ({currentTarget}) =>
+        ed = currentTarget.getModel()
         symbol = ed.tokenForBufferPosition(ed.getLastCursor().getBufferPosition())?.value
         if symbol?
           @hoogle.searchForSymbol(symbol, true)
