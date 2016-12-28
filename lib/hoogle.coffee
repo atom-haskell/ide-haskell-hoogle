@@ -1,8 +1,5 @@
-{Emitter} = require 'atom'
 CP = require 'child_process'
 {EOL} = require 'os'
-tkill = require 'tree-kill'
-{hsEscapeString} = require 'atom-haskell-utils'
 
 module.exports =
 class Hoogle
