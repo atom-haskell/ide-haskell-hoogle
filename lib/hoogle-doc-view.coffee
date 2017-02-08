@@ -1,5 +1,4 @@
 SubAtom = require 'sub-atom'
-highlightSync = require './highlight'
 
 module.exports =
 class HoogleDocView
@@ -34,7 +33,11 @@ class HoogleDocView
 
   showDoc: (doc) ->
     hl = (lines, scope) ->
-      html = highlightSync {fileContents: lines.join('\n'), scopeName: scope}
+      html = require('atom-highlight')
+        fileContents: lines.join('\n')
+        scopeName: scope
+        nbsp: false
+        lineDivs: true
       if scope is 'text.plain.null-grammar'
         return html
       else

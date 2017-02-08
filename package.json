@@ -16,9 +16,10 @@
     "atom": ">=1.13.0 <2.0.0"
   },
   "dependencies": {
+    "atom-highlight": "^0.3.0",
+    "atom-space-pen-views": "^2.0.3",
     "sub-atom": "^1.0.0",
-    "underscore-plus": "^1.6.6",
-    "atom-space-pen-views": "^2.0.3"
+    "underscore-plus": "^1.6.6"
   },
   "deserializers": {
     "HoogleDocView": "createDocView",
