@@ -9,11 +9,11 @@ class Hoogle
     new Promise (resolve, reject) ->
       cmd = atom.config.get('ide-haskell-hoogle.hooglePath')
       args = [hcmd, '-vl'].concat(args).concat(['--', query])
-      CP.execFile cmd, args, encoding: 'utf-8',
+      CP.execFile cmd, args, encoding: 'utf-8', maxBuffer: Infinity,
         (error, stdout, stderr) ->
           if error?
             reject error
-          if stderr?
+          if stderr.trim()
             console.warn stderr
           resolve stdout
     .then (response) ->
