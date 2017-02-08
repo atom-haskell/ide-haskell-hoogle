@@ -1,3 +1,7 @@
+## 0.0.5
+* Fix maxBuffer, don't show empty stderr
+* Use atom-highlight for highlighting
+
 ## 0.0.4
 * Merge branch 'atom-1.13'
 * s/target/currentTarget/
