@@ -1,3 +1,6 @@
+## 0.0.6
+* Update documentation link
+
 ## 0.0.5
 * Fix maxBuffer, don't show empty stderr
 * Use atom-highlight for highlighting
