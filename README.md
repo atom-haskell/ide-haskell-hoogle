@@ -10,7 +10,7 @@ Show hoogle information for symbol under cursor
 
 ## Setup and usage
 
-Please refer to https://atom-haskell.github.io/doc/ide-haskell-hoogle.html
+Please refer to https://atom-haskell.github.io/extra-packages/ide-haskell-hoogle/
 
 ## TODO
 
