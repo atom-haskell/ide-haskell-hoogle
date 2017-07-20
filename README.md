@@ -1,5 +1,7 @@
 # IDE-Haskell Hoogle
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/atom-haskell/ide-haskell-hoogle.svg)](https://greenkeeper.io/)
+
 ***This package is in alpha***
 
 ***You need existing local hoogle database for this to work, in addition to hoogle executable***
