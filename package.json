@@ -1,7 +1,7 @@
 {
   "name": "ide-haskell-hoogle",
   "main": "./lib/ide-haskell-hoogle",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "Show hoogle information for symbol under cursor",
   "keywords": [
     "ide-haskell",
