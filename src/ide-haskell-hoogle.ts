@@ -10,7 +10,12 @@ const disposables = new CompositeDisposable()
 let hoogle: Hoogle
 
 export function activate (state: never) {
-  (atom.packages as any).onDidTriggerActivationHook('language-haskell:grammar-used', () => reallyActivate(state))
+  disposables.add(
+    atom.packages.onDidTriggerActivationHook(
+      'language-haskell:grammar-used',
+      () => reallyActivate(state)
+    )
+  )
 }
 
 export function createDocView (props: DocProps) {
