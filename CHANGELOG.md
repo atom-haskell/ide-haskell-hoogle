@@ -1,3 +1,10 @@
+## 0.1.0
+* Rewrite in TypeScript
+* Use etch for views
+* Support hoogle-4 and hoogle-5
+* Switch to using hoogle's webserver/json interface
+* Allow querying hoogle hosted on haskell.org
+
 ## 0.0.6
 * Update documentation link
 
