@@ -1,4 +1,5 @@
-import {CompositeDisposable} from 'atom'
+// tslint:disable: jsx-no-multiline-js
+import { CompositeDisposable } from 'atom'
 import * as etch from 'etch'
 
 export interface IProps extends JSX.Props {
@@ -8,10 +9,11 @@ export interface IProps extends JSX.Props {
 export class HoogleWebView implements JSX.ElementClass {
   private disposables = new CompositeDisposable()
   private zoomFactor = 100
+  // tslint:disable-next-line: no-uninitialized
   private refs: {
     webView: Electron.WebViewElement
   }
-  constructor (public props: IProps = {}) {
+  constructor(public props: IProps = {}) {
     etch.initialize(this)
     // Create message element
 
@@ -19,25 +21,21 @@ export class HoogleWebView implements JSX.ElementClass {
       atom.config.observe('ide-haskell-hoogle.webZoomFactor', (zoomFactor: string) => {
         this.zoomFactor = parseInt(zoomFactor, 10)
         etch.update(this)
-      })
+      }),
     )
   }
 
-  public render () {
+  public render() {
     return (
       <div class="ide-haskell-hoogle">
         <div class="ide-haskell-hoogle-web-navbar btn-group">
           <button
             class="btn btn-default btn-back"
-            on={{click: () => {
-              atom.commands.dispatch(this.refs.webView, 'ide-haskell-hoogle:web-go-back')
-            }}}
+            on={{click: () => { atom.commands.dispatch(this.refs.webView, 'ide-haskell-hoogle:web-go-back') }}}
           />
           <button
             class="btn btn-default btn-forward"
-            on={{click: () => {
-              atom.commands.dispatch(this.refs.webView, 'ide-haskell-hoogle:web-go-forward')
-            }}}
+            on={{click: () => { atom.commands.dispatch(this.refs.webView, 'ide-haskell-hoogle:web-go-forward') }}}
           />
         </div>
         <webview
@@ -45,17 +43,19 @@ export class HoogleWebView implements JSX.ElementClass {
           class="ide-haskell-hoogle-web native-key-bindings"
           src={this.props.url}
           tabIndex="-1"
+          // tslint:disable: no-unbound-method
           on={{
             'dom-ready': this.setZoom,
             'did-navigate': this.didNavigate,
             'did-navigate-in-page': this.didNavigate,
           }}
-          />
+          // tslint:enable: no-unbound-method
+        />
       </div>
     )
   }
 
-  public async update (props: IProps) {
+  public async update(props: IProps) {
     if (this.props.url !== props.url) {
       this.props.url = props.url
       // this.refs.webView
@@ -65,31 +65,31 @@ export class HoogleWebView implements JSX.ElementClass {
     return etch.update(this)
   }
 
-  public getURI () {
+  public getURI() {
     return 'ide-haskell://hoogle/web/'
   }
 
-  public getTitle () {
+  public getTitle() {
     return 'Hoogle web'
   }
 
-  public destroy () {
+  public destroy() {
     this.disposables.dispose()
     etch.destroy(this)
   }
 
-  public serialize (): IProps & {deserializer: string} {
+  public serialize(): IProps & { deserializer: string } {
     return {
       ...this.props,
       deserializer: 'HoogleWebView',
     }
   }
 
-  private setZoom () {
+  private setZoom() {
     this.refs.webView.setZoomFactor(this.zoomFactor / 100)
   }
 
-  private didNavigate ({url}: {url: string}) {
+  private didNavigate({ url }: { url: string }) {
     this.props.url = url
   }
 }

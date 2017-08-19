@@ -1,7 +1,7 @@
-import {CompositeDisposable} from 'atom'
+import { CompositeDisposable } from 'atom'
 import * as etch from 'etch'
 import cheerio = require('cheerio')
-import {hl, openWeb} from './util'
+import { hl, openWeb } from './util'
 
 export interface IProps extends JSX.Props {
   symbol?: ISymbol
@@ -14,7 +14,7 @@ export class HoogleDocView implements JSX.ElementClass {
     fontFamily?: string
   } = {}
   private parsedDoc: string = ''
-  constructor (public props: IProps = {}) {
+  constructor(public props: IProps = {}) {
     this.updateDoc(props.symbol && props.symbol.doc)
     this.disposables.add(
       atom.config.observe('editor.fontSize', (fontSize: string) => {
@@ -31,64 +31,71 @@ export class HoogleDocView implements JSX.ElementClass {
     etch.initialize(this)
   }
 
-  public render () {
-    let hrefBtns: JSX.Element[] = [] // tslint:disable-line:no-null-keyword
+  public render() {
+    let hrefBtns: JSX.Element[] = []
     if (this.props.symbol && this.props.symbol.href) {
+      // tslint:disable: no-unbound-method
       hrefBtns = [
-          <a class="btn btn-default"
-             on={{click: this.openWebDoc}}
-             >
+        (
+          <a class="btn btn-default" on={{ click: this.openWebDoc }}>
             Open web documentation
-          </a>,
+          </a>
+        ),
+        (
           <a class="btn btn-default" href={this.props.symbol.href}>
             Open web documentation in browser
           </a>
-        ]
+        ),
+      ]
+      // tslint:enable: no-unbound-method
     }
     return (
       <div class="ide-haskell-hoogle">
-        <div style={this.style}
-             innerHTML={hl(this.props.symbol && this.props.symbol.signature || '', true)}
+        <div
+          style={this.style}
+          innerHTML={hl(this.props.symbol && this.props.symbol.signature || '', true)}
         />
         <div>{hrefBtns}</div>
-        <div class="ide-haskell-hoogle-output editor editor-colors native-key-bindings"
-            style={this.style}
-            tabIndex="-1"
-            innerHTML={this.parsedDoc}/>
+        <div
+          class="ide-haskell-hoogle-output editor editor-colors native-key-bindings"
+          style={this.style}
+          tabIndex="-1"
+          innerHTML={this.parsedDoc}
+        />
       </div>
     )
   }
 
-  public async update (props: IProps) {
+  public async update(props: IProps) {
     if ((this.props.symbol && this.props.symbol.doc)
-       !== (props.symbol && props.symbol.doc)) {
+      !== (props.symbol && props.symbol.doc)) {
       this.updateDoc(props.symbol && props.symbol.doc)
     }
     this.props = props
     return etch.update(this)
   }
 
-  public getURI () {
+  public getURI() {
     return 'ide-haskell://hoogle/doc/'
   }
 
-  public getTitle () {
+  public getTitle() {
     return 'Hoogle doc'
   }
 
-  public destroy () {
+  public destroy() {
     etch.destroy(this)
     this.disposables.dispose()
   }
 
-  public serialize (): IProps & {deserializer: string} {
+  public serialize(): IProps & { deserializer: string } {
     return {
       ...this.props,
       deserializer: 'HoogleDocView',
     }
   }
 
-  private updateDoc (doc: string | undefined) {
+  private updateDoc(doc: string | undefined) {
     if (!doc) {
       this.parsedDoc = 'No documentation'
       return
@@ -103,7 +110,7 @@ export class HoogleDocView implements JSX.ElementClass {
     this.parsedDoc = $.html()
   }
 
-  private openWebDoc () {
+  private openWebDoc() {
     this.props.symbol && openWeb(this.props.symbol, false)
   }
 }

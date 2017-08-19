@@ -1,7 +1,7 @@
 import * as get from 'request-promise-native'
 import cheerio = require('cheerio')
 import * as CP from 'child_process'
-import {autobind} from 'core-decorators'
+import { autobind } from 'core-decorators'
 
 interface ResponseItem {
   docs: string
@@ -33,7 +33,7 @@ export class Hoogle {
   private process?: CP.ChildProcess
   private hoogleBaseUrl = 'http://hoogle.haskell.org/'
 
-  constructor () {
+  constructor() {
     atom.config.observe('ide-haskell-hoogle.hoogleType', (val: string) => {
       if (val) {
         this.killProcess()
@@ -45,7 +45,7 @@ export class Hoogle {
     })
   }
 
-  public async searchForSymbol (symbol: string): Promise<ISymbol[]> {
+  public async searchForSymbol(symbol: string): Promise<ISymbol[]> {
     const res: HoogleResponse = await get({
       uri: `${this.hoogleBaseUrl}?&hoogle=${symbol}&mode=json`,
       json: true,
@@ -58,11 +58,11 @@ export class Hoogle {
     }
   }
 
-  public dispose () {
+  public dispose() {
     this.killProcess()
   }
 
-  private *parseResults (results: ResponseItem[]) {
+  private *parseResults(results: ResponseItem[]) {
     for (const r of results) {
       const sig = (cheerio.load(r.item) as any).text()
       yield {
@@ -74,7 +74,7 @@ export class Hoogle {
     }
   }
 
-  private *parseResults4 (results: ResponseItem4[]) {
+  private *parseResults4(results: ResponseItem4[]) {
     for (const r of results) {
       yield {
         mod: '',
@@ -86,12 +86,12 @@ export class Hoogle {
   }
 
   @autobind
-  private onProcessExit () {
+  private onProcessExit() {
     console.warn('ide-haskell-hoogle: hoogle died -- will try to restart') // tslint:disable-line: no-console
     this.spawnProcess()
   }
 
-  private spawnProcess () {
+  private spawnProcess() {
     const cmd = atom.config.get('ide-haskell-hoogle.hooglePath')
     console.log(`ide-haskell-hoogle: starting ${cmd}`) // tslint:disable-line: no-console
     this.port = Math.floor(Math.random() * (60000 - 10000) + 10000)
@@ -99,13 +99,13 @@ export class Hoogle {
       cmd,
       ['server', '--port', this.port.toString()],
       {
-        stdio: 'ignore'
-      }
+        stdio: 'ignore',
+      },
     )
-    this.process.once('exit', this.onProcessExit)
+    this.process.once('exit', this.onProcessExit) // tslint:disable-line: no-unbound-method
   }
 
-  private killProcess () {
+  private killProcess() {
     if (this.process !== undefined) {
       console.warn('ide-haskell-hoogle: killing hoogle') // tslint:disable-line: no-console
       this.process.removeAllListeners('exit')

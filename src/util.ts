@@ -1,9 +1,9 @@
 import highlight = require('atom-highlight')
 
-import {HoogleDocView} from './hoogle-doc-view'
-import {HoogleWebView} from './hoogle-web-view'
+import { HoogleDocView } from './hoogle-doc-view'
+import { HoogleWebView } from './hoogle-web-view'
 
-export function hl (lines: string, inline: boolean) {
+export function hl(lines: string, inline: boolean) {
   return highlight({
     fileContents: lines,
     scopeName: 'source.haskell',
@@ -14,20 +14,20 @@ export function hl (lines: string, inline: boolean) {
   })
 }
 
-export async function openDoc (sym: ISymbol) {
+export async function openDoc(sym: ISymbol) {
   const view: HoogleDocView = await atom.workspace.open('ide-haskell://hoogle/doc/', {
     split: 'right',
     searchAllPanes: true,
     activatePane: false,
   })
-  view.update({symbol: sym})
+  view.update({ symbol: sym })
 }
 
-export async function openWeb (sym: ISymbol, split = true) {
+export async function openWeb(sym: ISymbol, split = true) {
   const view: HoogleWebView = await atom.workspace.open(`ide-haskell://hoogle/web/`, {
     split: split ? 'right' : undefined,
     searchAllPanes: true,
     activatePane: false,
   })
-  view.update({url: sym.href})
+  view.update({ url: sym.href })
 }
