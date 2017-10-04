@@ -17,7 +17,7 @@ export class HoogleDocView implements JSX.ElementClass {
   constructor(public props: IProps = {}) {
     this.updateDoc(props.symbol && props.symbol.doc)
     this.disposables.add(
-      atom.config.observe('editor.fontSize', (fontSize: string) => {
+      atom.config.observe('editor.fontSize', (fontSize: number) => {
         if (fontSize) {
           this.style.fontSize = `${fontSize}px`
         }

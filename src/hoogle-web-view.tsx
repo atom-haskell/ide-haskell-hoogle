@@ -18,8 +18,8 @@ export class HoogleWebView implements JSX.ElementClass {
     // Create message element
 
     this.disposables.add(
-      atom.config.observe('ide-haskell-hoogle.webZoomFactor', (zoomFactor: string) => {
-        this.zoomFactor = parseInt(zoomFactor, 10)
+      atom.config.observe('ide-haskell-hoogle.webZoomFactor', (zoomFactor: number) => {
+        this.zoomFactor = zoomFactor
         etch.update(this)
       }),
     )
