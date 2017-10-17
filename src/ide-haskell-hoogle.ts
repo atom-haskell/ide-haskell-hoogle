@@ -1,33 +1,34 @@
 import { TextEditor, IEventDesc, CompositeDisposable } from 'atom'
-import { HoogleDocView, IProps as DocProps } from './hoogle-doc-view'
-import { HoogleWebView, IProps as WebProps } from './hoogle-web-view'
-import { Hoogle } from './hoogle'
-import { selectListView } from './list-view'
-import { openDoc, openWeb } from './util'
+import { HoogleDocView as HoogleDocViewT, IProps as DocProps } from './hoogle-doc-view'
+import { HoogleWebView as HoogleWebViewT, IProps as WebProps } from './hoogle-web-view'
+import { Hoogle as HoogleT } from './hoogle'
 export { config } from './config'
 
 const disposables = new CompositeDisposable()
-let hoogle: Hoogle
+let hoogle: HoogleT
 
 export function activate(state: never) {
   disposables.add(
     atom.packages.onDidTriggerActivationHook(
       'language-haskell:grammar-used',
-      () => reallyActivate(state),
+      () => { reallyActivate(state) },
     ),
   )
 }
 
-export function createDocView(props: DocProps) {
+export function createDocView(props: DocProps = {}): HoogleDocViewT {
+  const {HoogleDocView}: {HoogleDocView: typeof HoogleDocViewT} = require('./hoogle-doc-view')
   return new HoogleDocView(props)
 }
 
-export function createWebView(props: WebProps) {
+export function createWebView(props: WebProps = {}): HoogleWebViewT {
+  const {HoogleWebView}: {HoogleWebView: typeof HoogleWebViewT} = require('./hoogle-web-view')
   return new HoogleWebView(props)
 }
 
 async function showDoc(ed: TextEditor, func: (sym: ISymbol) => void) {
   const token = ed.tokenForBufferPosition(ed.getLastCursor().getBufferPosition())
+  const {selectListView} = await import('./list-view')
   if (token) {
     const symbol = token.value
     const symbols = await hoogle.searchForSymbol(symbol)
@@ -38,8 +39,10 @@ async function showDoc(ed: TextEditor, func: (sym: ISymbol) => void) {
   }
 }
 
-function reallyActivate(state: never) {
+async function reallyActivate(state: never) {
   if (hoogle) { return }
+  const {Hoogle} = await import('./hoogle')
+  const {openDoc, openWeb} = await import('./util')
   hoogle = new Hoogle()
   disposables.add(hoogle)
 
@@ -50,9 +53,9 @@ function reallyActivate(state: never) {
     }
     switch (m[1]) {
       case 'doc':
-        return new HoogleDocView()
+        return createDocView()
       case 'web':
-        return new HoogleWebView()
+        return createWebView()
     }
   }))
 
