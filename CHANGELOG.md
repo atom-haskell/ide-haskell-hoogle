@@ -1,3 +1,8 @@
+## 0.1.1
+* Optimize initial activation time
+* More types
+* Enforce code style
+
 ## 0.1.0
 * Rewrite in TypeScript
 * Use etch for views
