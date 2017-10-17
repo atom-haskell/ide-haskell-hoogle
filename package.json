@@ -15,6 +15,9 @@
   "engines": {
     "atom": ">=1.13.0 <2.0.0"
   },
+  "activationCommands": {
+    "atom-text-editor": ["ide-haskell-hoogle:show-doc-for-symbol", "ide-haskell-hoogle:show-web-doc-for-symbol"]
+  },
   "dependencies": {
     "atom-highlight": "^0.3.0",
     "atom-select-list": "^0.2.0",
