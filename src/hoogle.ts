@@ -1,5 +1,4 @@
 import * as get from 'request-promise-native'
-import cheerio = require('cheerio')
 import * as CP from 'child_process'
 import { autobind } from 'core-decorators'
 
@@ -46,6 +45,7 @@ export class Hoogle {
   }
 
   public async searchForSymbol(symbol: string): Promise<ISymbol[]> {
+    // tslint:disable-next-line:no-unsafe-any
     const res: HoogleResponse = await get({
       uri: `${this.hoogleBaseUrl}?&hoogle=${symbol}&mode=json`,
       json: true,
@@ -64,7 +64,9 @@ export class Hoogle {
 
   private *parseResults(results: ResponseItem[]) {
     for (const r of results) {
-      const sig = (cheerio.load(r.item) as any).text()
+      const div = document.createElement('div')
+      div.innerHTML = r.item
+      const sig = div.innerText
       yield {
         mod: r.module.name,
         signature: sig.replace('<0>', ''),

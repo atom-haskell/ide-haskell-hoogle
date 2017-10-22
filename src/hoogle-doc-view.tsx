@@ -1,13 +1,14 @@
 import { CompositeDisposable } from 'atom'
 import * as etch from 'etch'
-import cheerio = require('cheerio')
 import { hl, openWeb } from './util'
 
 export interface IProps extends JSX.Props {
   symbol?: ISymbol
 }
 
-export class HoogleDocView implements JSX.ElementClass {
+type ElementClass = JSX.ElementClass
+
+export class HoogleDocView implements ElementClass {
   public disposables = new CompositeDisposable()
   private style: {
     fontSize?: string
@@ -34,22 +35,25 @@ export class HoogleDocView implements JSX.ElementClass {
   public render() {
     let hrefBtns: JSX.Element[] = []
     if (this.props.symbol && this.props.symbol.href) {
-      // tslint:disable: no-unbound-method
       hrefBtns = [
         (
+          // tslint:disable:no-unsafe-any
           <a class="btn btn-default" on={{ click: this.openWebDoc }}>
             Open web documentation
           </a>
+          // tslint:enable:no-unsafe-any
         ),
         (
+          // tslint:disable:no-unsafe-any
           <a class="btn btn-default" href={this.props.symbol.href}>
             Open web documentation in browser
           </a>
+          // tslint:enable:no-unsafe-any
         ),
       ]
-      // tslint:enable: no-unbound-method
     }
     return (
+      // tslint:disable:no-unsafe-any
       <div class="ide-haskell-hoogle">
         <div
           style={this.style}
@@ -63,6 +67,7 @@ export class HoogleDocView implements JSX.ElementClass {
           innerHTML={this.parsedDoc}
         />
       </div>
+      // tslint:enable:no-unsafe-any
     )
   }
 
@@ -84,6 +89,7 @@ export class HoogleDocView implements JSX.ElementClass {
   }
 
   public destroy() {
+    // tslint:disable-next-line:no-floating-promises
     etch.destroy(this)
     this.disposables.dispose()
   }
@@ -100,17 +106,18 @@ export class HoogleDocView implements JSX.ElementClass {
       this.parsedDoc = 'No documentation'
       return
     }
-    const $ = cheerio.load(doc)
-    $('pre').each((idx, el) => {
-      $(el).replaceWith(hl($(el).text(), false))
+    const div = document.createElement(doc)
+    div.innerHTML = doc
+    div.querySelectorAll('pre').forEach((el) => {
+      el.outerHTML = hl(el.innerText, false)
     })
-    $('a').each((idx, el) => {
-      $(el).replaceWith(hl($(el).text().trim(), true))
+    div.querySelectorAll('a').forEach((el) => {
+      el.outerHTML = hl(el.innerText.trim(), true)
     })
-    this.parsedDoc = $.html()
+    this.parsedDoc = div.innerHTML
   }
 
-  private openWebDoc() {
+  private openWebDoc = () => {
     this.props.symbol && openWeb(this.props.symbol, false)
   }
 }

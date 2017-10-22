@@ -11,17 +11,20 @@ export function activate(state: never) {
   disposables.add(
     atom.packages.onDidTriggerActivationHook(
       'language-haskell:grammar-used',
+      // tslint:disable-next-line:no-floating-promises
       () => { reallyActivate(state) },
     ),
   )
 }
 
 export function createDocView(props: DocProps = {}): HoogleDocViewT {
+  // tslint:disable-next-line:no-unsafe-any
   const {HoogleDocView}: {HoogleDocView: typeof HoogleDocViewT} = require('./hoogle-doc-view')
   return new HoogleDocView(props)
 }
 
 export function createWebView(props: WebProps = {}): HoogleWebViewT {
+  // tslint:disable-next-line:no-unsafe-any
   const {HoogleWebView}: {HoogleWebView: typeof HoogleWebViewT} = require('./hoogle-web-view')
   return new HoogleWebView(props)
 }
@@ -62,17 +65,17 @@ async function reallyActivate(state: never) {
   disposables.add(
     atom.commands.add('webview.ide-haskell-hoogle-web', {
       'ide-haskell-hoogle:web-go-back':
-      ({ currentTarget }: IEventDesc) => (currentTarget as any).goBack(),
+      ({ currentTarget }: { currentTarget: Electron.WebViewElement }) =>
+        currentTarget.goBack(),
       'ide-haskell-hoogle:web-go-forward':
-      ({ currentTarget }: IEventDesc) => (currentTarget as any).goForward(),
+      ({ currentTarget }: { currentTarget: Electron.WebViewElement }) =>
+        currentTarget.goForward(),
     }),
     atom.commands.add('atom-text-editor', {
-      'ide-haskell-hoogle:show-doc-for-symbol': ({ currentTarget }: IEventDesc) => {
-        showDoc(currentTarget.getModel(), openDoc)
-      },
-      'ide-haskell-hoogle:show-web-doc-for-symbol': ({ currentTarget }: IEventDesc) => {
-        showDoc(currentTarget.getModel(), openWeb)
-      },
+      'ide-haskell-hoogle:show-doc-for-symbol':
+        async ({ currentTarget }: IEventDesc) => showDoc(currentTarget.getModel(), openDoc),
+      'ide-haskell-hoogle:show-web-doc-for-symbol':
+        async ({ currentTarget }: IEventDesc) => showDoc(currentTarget.getModel(), openWeb),
     }),
   )
 }

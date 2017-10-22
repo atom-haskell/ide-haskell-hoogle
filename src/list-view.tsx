@@ -6,7 +6,7 @@ import { hl } from './util'
 export async function selectListView(
   items: ISymbol[],
 ): Promise<ISymbol | undefined> {
-  let panel: Panel | undefined
+  let panel: Panel<SelectListView<ISymbol>> | undefined
   let res: ISymbol | undefined
   let refocus: HTMLElement | undefined
   try {
@@ -16,10 +16,12 @@ export async function selectListView(
         itemsClassList: ['ide-haskell'],
         elementForItem: (item: ISymbol) =>
           etch.render(
+            // tslint:disable:no-unsafe-any
             <li class="two-lines">
               <span class="primary-line" innerHTML={hl(item.signature || '', true)} />
               <span class="secondary-line">{item.mod || ''}</span>
             </li>,
+            // tslint:enable:no-unsafe-any
           ) as HTMLElement,
         filterKeyForItem: (item) => item.signature,
         didCancelSelection: () => {
