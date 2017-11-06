@@ -106,7 +106,7 @@ export class HoogleDocView implements ElementClass {
       this.parsedDoc = 'No documentation'
       return
     }
-    const div = document.createElement(doc)
+    const div = document.createElement('div')
     div.innerHTML = doc
     div.querySelectorAll('pre').forEach((el) => {
       el.outerHTML = hl(el.innerText, false)
