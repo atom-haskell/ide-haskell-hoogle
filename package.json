@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "atom-highlight": "^0.3.0",
-    "atom-select-list": "^0.2.0",
+    "atom-select-list": "^0.3.2",
     "atom-space-pen-views": "^2.0.3",
     "core-decorators": "^0.19.0",
     "etch": "^0.12.5",
