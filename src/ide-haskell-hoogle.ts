@@ -8,12 +8,19 @@ const disposables = new CompositeDisposable()
 let hoogle: HoogleT
 
 export function activate(state: never) {
-  disposables.add(
-    atom.packages.onDidTriggerActivationHook(
-      'language-haskell:grammar-used',
-      // tslint:disable-next-line:no-floating-promises
-      () => { reallyActivate(state) },
-    ),
+  const disp = atom.packages.onDidTriggerActivationHook(
+    'language-haskell:grammar-used',
+    () => {
+      disp.dispose()
+      reallyActivate(state)
+      .catch((e) => atom.notifications.addFatalError(
+        'Failed to activate ide-haskell-hoogle', {
+          stack: (e as Error).stack,
+          dismissable: true,
+          detail: e,
+        },
+      ))
+    },
   )
 }
 
