@@ -1,3 +1,11 @@
+## 0.1.2
+* Bump atom-list-view dependency
+* Guard against double activation
+* Fix invalid createElement argument
+* Update typings
+* Update typings
+* Update typings, lints, remove cheerio dependency
+
 ## 0.1.1
 * Optimize initial activation time
 * More types
