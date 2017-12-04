@@ -1,4 +1,4 @@
-# IDE-Haskell Hoogle
+# IDE-Haskell Hoogle ![](https://david-dm.org/atom-haskell/ide-haskell-hoogle.svg)
 
 ***This package is in alpha***
 
