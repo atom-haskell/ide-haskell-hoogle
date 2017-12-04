@@ -35,11 +35,11 @@ export class HoogleWebView implements ElementClass {
         <div class="ide-haskell-hoogle-web-navbar btn-group">
           <button
             class="btn btn-default btn-back"
-            on={{click: () => { atom.commands.dispatch(this.refs.webView, 'ide-haskell-hoogle:web-go-back') }}}
+            on={{ click: () => { atom.commands.dispatch(this.refs.webView, 'ide-haskell-hoogle:web-go-back') } }}
           />
           <button
             class="btn btn-default btn-forward"
-            on={{click: () => { atom.commands.dispatch(this.refs.webView, 'ide-haskell-hoogle:web-go-forward') }}}
+            on={{ click: () => { atom.commands.dispatch(this.refs.webView, 'ide-haskell-hoogle:web-go-forward') } }}
           />
         </div>
         <webview

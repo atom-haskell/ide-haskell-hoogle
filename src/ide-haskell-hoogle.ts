@@ -26,19 +26,19 @@ export function activate(state: never) {
 
 export function createDocView(props: DocProps = {}): HoogleDocViewT {
   // tslint:disable-next-line:no-unsafe-any
-  const {HoogleDocView}: {HoogleDocView: typeof HoogleDocViewT} = require('./hoogle-doc-view')
+  const { HoogleDocView }: {HoogleDocView: typeof HoogleDocViewT} = require('./hoogle-doc-view')
   return new HoogleDocView(props)
 }
 
 export function createWebView(props: WebProps = {}): HoogleWebViewT {
   // tslint:disable-next-line:no-unsafe-any
-  const {HoogleWebView}: {HoogleWebView: typeof HoogleWebViewT} = require('./hoogle-web-view')
+  const { HoogleWebView }: {HoogleWebView: typeof HoogleWebViewT} = require('./hoogle-web-view')
   return new HoogleWebView(props)
 }
 
 async function showDoc(ed: TextEditor, func: (sym: ISymbol) => void) {
   const token = ed.tokenForBufferPosition(ed.getLastCursor().getBufferPosition())
-  const {selectListView} = await import('./list-view')
+  const { selectListView } = await import('./list-view')
   if (token) {
     const symbol = token.value
     const symbols = await hoogle.searchForSymbol(symbol)
@@ -51,8 +51,8 @@ async function showDoc(ed: TextEditor, func: (sym: ISymbol) => void) {
 
 async function reallyActivate(state: never) {
   if (hoogle) { return }
-  const {Hoogle} = await import('./hoogle')
-  const {openDoc, openWeb} = await import('./util')
+  const { Hoogle } = await import('./hoogle')
+  const { openDoc, openWeb } = await import('./util')
   hoogle = new Hoogle()
   disposables.add(hoogle)
 
