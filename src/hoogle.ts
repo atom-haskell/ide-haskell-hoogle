@@ -94,7 +94,7 @@ export class Hoogle {
   }
 
   private spawnProcess() {
-    const cmd = atom.config.get('ide-haskell-hoogle.hooglePath')
+    const cmd = atom.config.get('ide-haskell-hoogle.hooglePath') || 'hoogle'
     console.log(`ide-haskell-hoogle: starting ${cmd}`) // tslint:disable-line: no-console
     this.port = Math.floor(Math.random() * (60000 - 10000) + 10000)
     this.process = CP.spawn(

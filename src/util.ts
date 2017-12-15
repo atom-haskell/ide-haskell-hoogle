@@ -15,19 +15,19 @@ export function hl(lines: string, inline: boolean) {
 }
 
 export async function openDoc(sym: ISymbol) {
-  const view: HoogleDocView = await atom.workspace.open<HoogleDocView>('ide-haskell://hoogle/doc/', {
+  const view: HoogleDocView = await atom.workspace.open('ide-haskell://hoogle/doc/', {
     split: 'right',
     searchAllPanes: true,
     activatePane: false,
-  })
+  }) as HoogleDocView
   return view.update({ symbol: sym })
 }
 
 export async function openWeb(sym: ISymbol, split = true) {
-  const view: HoogleWebView = await atom.workspace.open<HoogleWebView>(`ide-haskell://hoogle/web/`, {
+  const view: HoogleWebView = await atom.workspace.open(`ide-haskell://hoogle/web/`, {
     split: split ? 'right' : undefined,
     searchAllPanes: true,
     activatePane: false,
-  })
+  }) as HoogleWebView
   return view.update({ url: sym.href })
 }

@@ -10,7 +10,7 @@ export async function selectListView(
   let res: ISymbol | undefined
   let refocus: HTMLElement | undefined
   try {
-    res = await new Promise<ISymbol | undefined>((resolve, reject) => {
+    res = await new Promise<ISymbol | undefined>((resolve) => {
       const select = new SelectListView<ISymbol>({
         items,
         itemsClassList: ['ide-haskell'],

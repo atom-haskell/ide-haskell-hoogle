@@ -1,4 +1,4 @@
-import { TextEditor, IEventDesc, CompositeDisposable } from 'atom'
+import { TextEditor, TextEditorElement, CompositeDisposable } from 'atom'
 import { HoogleDocView as HoogleDocViewT, IProps as DocProps } from './hoogle-doc-view'
 import { HoogleWebView as HoogleWebViewT, IProps as WebProps } from './hoogle-web-view'
 import { Hoogle as HoogleT } from './hoogle'
@@ -49,14 +49,14 @@ async function showDoc(ed: TextEditor, func: (sym: ISymbol) => void) {
   }
 }
 
-async function reallyActivate(state: never) {
+async function reallyActivate(_state: never) {
   if (hoogle) { return }
   const { Hoogle } = await import('./hoogle')
   const { openDoc, openWeb } = await import('./util')
   hoogle = new Hoogle()
   disposables.add(hoogle)
 
-  disposables.add(atom.workspace.addOpener((uriToOpen: string, options: any) => {
+  disposables.add(atom.workspace.addOpener((uriToOpen: string) => {
     const m = uriToOpen.match(/^ide-haskell:\/\/hoogle\/(doc|web)\/(.*)$/)
     if (!(m && m[1])) {
       return undefined
@@ -67,22 +67,23 @@ async function reallyActivate(state: never) {
       case 'web':
         return createWebView()
     }
+    return undefined
   }))
 
   disposables.add(
     atom.commands.add('webview.ide-haskell-hoogle-web', {
       'ide-haskell-hoogle:web-go-back':
-      ({ currentTarget }: { currentTarget: Electron.WebViewElement }) =>
-        currentTarget.goBack(),
+      (ev) =>
+        (ev.currentTarget as Electron.WebViewElement).goBack(),
       'ide-haskell-hoogle:web-go-forward':
-      ({ currentTarget }: { currentTarget: Electron.WebViewElement }) =>
-        currentTarget.goForward(),
+      (ev) =>
+        (ev.currentTarget as Electron.WebViewElement).goForward(),
     }),
     atom.commands.add('atom-text-editor', {
       'ide-haskell-hoogle:show-doc-for-symbol':
-        async ({ currentTarget }: IEventDesc) => showDoc(currentTarget.getModel(), openDoc),
+        async ({ currentTarget }) => showDoc((currentTarget as TextEditorElement).getModel(), openDoc),
       'ide-haskell-hoogle:show-web-doc-for-symbol':
-        async ({ currentTarget }: IEventDesc) => showDoc(currentTarget.getModel(), openWeb),
+        async ({ currentTarget }) => showDoc((currentTarget as TextEditorElement).getModel(), openWeb),
     }),
   )
 }
