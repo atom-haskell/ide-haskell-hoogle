@@ -16,3 +16,18 @@ Please refer to https://atom-haskell.github.io/extra-packages/ide-haskell-hoogle
 * [x] Show web documentation
 * [ ] Auto-guess module for symbol
 * [ ] Typed searches
+
+# License
+
+Copyright © 2016 Atom-Haskell
+
+Contributors (by number of commits):
+
+<!-- BEGIN CONTRIBUTORS LIST -->
+* Nikolay Yakimov
+
+<!-- END CONTRIBUTORS LIST -->
+
+See the [LICENSE.md][LICENSE] for details.
+
+[LICENSE]: https://github.com/atom-haskell/ide-haskell-hoogle/blob/master/LICENSE.md
