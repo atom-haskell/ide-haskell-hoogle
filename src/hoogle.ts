@@ -30,7 +30,7 @@ type HoogleResponse = ResponseItem[] | {
 export class Hoogle {
   private port?: number
   private process?: CP.ChildProcess
-  private hoogleBaseUrl = 'http://hoogle.haskell.org/'
+  private hoogleBaseUrl = 'https://hoogle.haskell.org/'
 
   constructor() {
     atom.config.observe('ide-haskell-hoogle.hoogleType', (val: string) => {
