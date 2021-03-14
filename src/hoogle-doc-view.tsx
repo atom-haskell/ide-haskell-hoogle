@@ -33,31 +33,25 @@ export class HoogleDocView implements ElementClass {
   }
 
   public render() {
-    let hrefBtns: JSX.Element[] = []
+    const hrefBtns: JSX.Element[] = []
     if (this.props.symbol && this.props.symbol.href) {
-      hrefBtns = [
-        (
-          // tslint:disable:no-unsafe-any
-          <a class="btn btn-default" on={{ click: this.openWebDoc }}>
-            Open web documentation
-          </a>
-          // tslint:enable:no-unsafe-any
-        ),
-        (
-          // tslint:disable:no-unsafe-any
-          <a class="btn btn-default" href={this.props.symbol.href}>
-            Open web documentation in browser
-          </a>
-          // tslint:enable:no-unsafe-any
-        ),
-      ]
+      hrefBtns.push(
+        <a class="btn btn-default" on={{ click: this.openWebDoc }}>
+          Open web documentation
+        </a>,
+        // tslint:disable-next-line: jsx-wrap-multiline
+        <a class="btn btn-default" href={this.props.symbol.href}>
+          Open web documentation in browser
+        </a>,
+      )
     }
     return (
-      // tslint:disable:no-unsafe-any
       <div class="ide-haskell-hoogle">
         <div
           style={this.style}
-          innerHTML={hl(this.props.symbol && this.props.symbol.signature || '', true)}
+          innerHTML={hl(
+            (this.props.symbol && this.props.symbol.signature) || '',
+          )}
         />
         <div>{hrefBtns}</div>
         <div
@@ -67,13 +61,14 @@ export class HoogleDocView implements ElementClass {
           innerHTML={this.parsedDoc}
         />
       </div>
-      // tslint:enable:no-unsafe-any
     )
   }
 
   public async update(props: IProps) {
-    if ((this.props.symbol && this.props.symbol.doc)
-      !== (props.symbol && props.symbol.doc)) {
+    if (
+      (this.props.symbol && this.props.symbol.doc) !==
+      (props.symbol && props.symbol.doc)
+    ) {
       this.updateDoc(props.symbol && props.symbol.doc)
     }
     this.props = props
@@ -109,10 +104,10 @@ export class HoogleDocView implements ElementClass {
     const div = document.createElement('div')
     div.innerHTML = doc
     div.querySelectorAll('pre').forEach((el) => {
-      el.outerHTML = hl(el.innerText, false)
+      el.innerHTML = hl(el.innerText)
     })
     div.querySelectorAll('a').forEach((el) => {
-      el.outerHTML = hl(el.innerText.trim(), true)
+      el.outerHTML = hl(el.innerText.trim())
     })
     this.parsedDoc = div.innerHTML
   }

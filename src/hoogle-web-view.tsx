@@ -1,5 +1,6 @@
 // tslint:disable: jsx-no-multiline-js
 import { CompositeDisposable } from 'atom'
+import type { WebviewTag } from 'electron'
 import * as etch from 'etch'
 
 export interface IProps extends JSX.Props {
@@ -11,9 +12,8 @@ type ElementClass = JSX.ElementClass
 export class HoogleWebView implements ElementClass {
   private disposables = new CompositeDisposable()
   private zoomFactor = 100
-  // tslint:disable-next-line: no-uninitialized
   private refs!: {
-    webView?: Electron.WebViewElement
+    webView?: WebviewTag
   }
   private canShowWebview = false
   constructor(public props: IProps = {}) {
@@ -21,40 +21,58 @@ export class HoogleWebView implements ElementClass {
     // Create message element
 
     this.disposables.add(
-      atom.config.observe('ide-haskell-hoogle.webZoomFactor', (zoomFactor: number) => {
-        this.zoomFactor = zoomFactor
-        // tslint:disable-next-line:no-floating-promises
-        etch.update(this)
-      }),
+      atom.config.observe(
+        'ide-haskell-hoogle.webZoomFactor',
+        (zoomFactor: number) => {
+          this.zoomFactor = zoomFactor
+          // tslint:disable-next-line: no-floating-promises
+          etch.update(this)
+        },
+      ),
     )
     this.canShowWebview = atom.packages.hasActivatedInitialPackages()
-    if(!this.canShowWebview) {
+    if (!this.canShowWebview) {
       const disp = atom.packages.onDidActivateInitialPackages(() => {
         disp.dispose()
         this.canShowWebview = true
+        // tslint:disable-next-line: no-floating-promises
         etch.update(this)
       })
     }
   }
 
   public render() {
-    // tslint:disable:no-unsafe-any
     return (
       <div class="ide-haskell-hoogle">
         <div class="ide-haskell-hoogle-web-navbar btn-group">
           <button
             class="btn btn-default btn-back"
-            on={{ click: () => { this.refs.webView && atom.commands.dispatch(this.refs.webView, 'ide-haskell-hoogle:web-go-back') } }}
+            on={{
+              click: () => {
+                this.refs.webView &&
+                  atom.commands.dispatch(
+                    this.refs.webView,
+                    'ide-haskell-hoogle:web-go-back',
+                  )
+              },
+            }}
           />
           <button
             class="btn btn-default btn-forward"
-            on={{ click: () => { this.refs.webView && atom.commands.dispatch(this.refs.webView, 'ide-haskell-hoogle:web-go-forward') } }}
+            on={{
+              click: () => {
+                this.refs.webView &&
+                  atom.commands.dispatch(
+                    this.refs.webView,
+                    'ide-haskell-hoogle:web-go-forward',
+                  )
+              },
+            }}
           />
         </div>
         {this.webview()}
       </div>
     )
-    // tslint:enable:no-unsafe-any
   }
 
   public async update(props: IProps) {
@@ -97,17 +115,20 @@ export class HoogleWebView implements ElementClass {
   }
 
   private webview() {
-    if(!this.canShowWebview) return null
-    return (<webview
-      ref="webView"
-      class="ide-haskell-hoogle-web native-key-bindings"
-      src={this.props.url}
-      tabIndex="-1"
-      on={{
-        'dom-ready': this.setZoom,
-        'did-navigate': this.didNavigate,
-        'did-navigate-in-page': this.didNavigate,
-      }}
-    />)
+    // tslint:disable-next-line: no-null-keyword
+    if (!this.canShowWebview) return null
+    return (
+      <webview
+        ref="webView"
+        class="ide-haskell-hoogle-web native-key-bindings"
+        src={this.props.url}
+        tabIndex="-1"
+        on={{
+          'dom-ready': this.setZoom,
+          'did-navigate': this.didNavigate,
+          'did-navigate-in-page': this.didNavigate,
+        }}
+      />
+    )
   }
 }

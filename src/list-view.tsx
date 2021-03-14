@@ -18,12 +18,12 @@ export async function selectListView(
           etch.render(
             // tslint:disable:no-unsafe-any
             <li class="two-lines">
-              <span class="primary-line" innerHTML={hl(item.signature || '', true)} />
+              <span class="primary-line" innerHTML={hl(item.signature || '')} />
               <span class="secondary-line">{item.mod || ''}</span>
             </li>,
             // tslint:enable:no-unsafe-any
           ) as HTMLElement,
-        filterKeyForItem: (item) => item.signature,
+        filterKeyForItem: (item) => item.signature + ' ' + item.mod,
         didCancelSelection: () => {
           resolve(undefined)
         },

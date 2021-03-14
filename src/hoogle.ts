@@ -1,6 +1,4 @@
-import * as get from 'request-promise-native'
 import * as CP from 'child_process'
-import { autobind } from 'core-decorators'
 
 interface ResponseItem {
   docs: string
@@ -23,9 +21,11 @@ interface ResponseItem4 {
   self: string
 }
 
-type HoogleResponse = ResponseItem[] | {
-  results: ResponseItem4[]
-}
+type HoogleResponse =
+  | ResponseItem[]
+  | {
+      results: ResponseItem4[]
+    }
 
 export class Hoogle {
   private port?: number
@@ -46,10 +46,11 @@ export class Hoogle {
 
   public async searchForSymbol(symbol: string): Promise<ISymbol[]> {
     // tslint:disable-next-line:no-unsafe-any
-    const res: HoogleResponse = await get({
-      uri: `${this.hoogleBaseUrl}?&hoogle=${symbol}&mode=json`,
-      json: true,
-    })
+    const req = await fetch(`${this.hoogleBaseUrl}?&hoogle=${symbol}&mode=json`)
+    if (!req.ok) {
+      throw new Error(`Request failed ${req.status}: ${req.statusText}`)
+    }
+    const res: HoogleResponse = await req.json()
 
     if (Array.isArray(res)) {
       return Array.from(this.parseResults(res))
@@ -87,8 +88,7 @@ export class Hoogle {
     }
   }
 
-  @autobind
-  private onProcessExit() {
+  private onProcessExit = () => {
     console.warn('ide-haskell-hoogle: hoogle died -- will try to restart') // tslint:disable-line: no-console
     this.spawnProcess()
   }
@@ -97,13 +97,9 @@ export class Hoogle {
     const cmd = atom.config.get('ide-haskell-hoogle.hooglePath') || 'hoogle'
     console.log(`ide-haskell-hoogle: starting ${cmd}`) // tslint:disable-line: no-console
     this.port = Math.floor(Math.random() * (60000 - 10000) + 10000)
-    this.process = CP.spawn(
-      cmd,
-      ['server', '--port', this.port.toString()],
-      {
-        stdio: 'ignore',
-      },
-    )
+    this.process = CP.spawn(cmd, ['server', '--port', this.port.toString()], {
+      stdio: 'ignore',
+    })
     this.process.once('exit', this.onProcessExit) // tslint:disable-line: no-unbound-method
   }
 
