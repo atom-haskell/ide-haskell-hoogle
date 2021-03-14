@@ -13,8 +13,9 @@ export class HoogleWebView implements ElementClass {
   private zoomFactor = 100
   // tslint:disable-next-line: no-uninitialized
   private refs!: {
-    webView: Electron.WebViewElement
+    webView?: Electron.WebViewElement
   }
+  private canShowWebview = false
   constructor(public props: IProps = {}) {
     etch.initialize(this)
     // Create message element
@@ -26,6 +27,14 @@ export class HoogleWebView implements ElementClass {
         etch.update(this)
       }),
     )
+    this.canShowWebview = atom.packages.hasActivatedInitialPackages()
+    if(!this.canShowWebview) {
+      const disp = atom.packages.onDidActivateInitialPackages(() => {
+        disp.dispose()
+        this.canShowWebview = true
+        etch.update(this)
+      })
+    }
   }
 
   public render() {
@@ -35,24 +44,14 @@ export class HoogleWebView implements ElementClass {
         <div class="ide-haskell-hoogle-web-navbar btn-group">
           <button
             class="btn btn-default btn-back"
-            on={{ click: () => { atom.commands.dispatch(this.refs.webView, 'ide-haskell-hoogle:web-go-back') } }}
+            on={{ click: () => { this.refs.webView && atom.commands.dispatch(this.refs.webView, 'ide-haskell-hoogle:web-go-back') } }}
           />
           <button
             class="btn btn-default btn-forward"
-            on={{ click: () => { atom.commands.dispatch(this.refs.webView, 'ide-haskell-hoogle:web-go-forward') } }}
+            on={{ click: () => { this.refs.webView && atom.commands.dispatch(this.refs.webView, 'ide-haskell-hoogle:web-go-forward') } }}
           />
         </div>
-        <webview
-          ref="webView"
-          class="ide-haskell-hoogle-web native-key-bindings"
-          src={this.props.url}
-          tabIndex="-1"
-          on={{
-            'dom-ready': this.setZoom,
-            'did-navigate': this.didNavigate,
-            'did-navigate-in-page': this.didNavigate,
-          }}
-        />
+        {this.webview()}
       </div>
     )
     // tslint:enable:no-unsafe-any
@@ -90,10 +89,25 @@ export class HoogleWebView implements ElementClass {
   }
 
   private setZoom = () => {
-    this.refs.webView.setZoomFactor(this.zoomFactor / 100)
+    this.refs.webView && this.refs.webView.setZoomFactor(this.zoomFactor / 100)
   }
 
   private didNavigate = ({ url }: { url: string }) => {
     this.props.url = url
+  }
+
+  private webview() {
+    if(!this.canShowWebview) return null
+    return (<webview
+      ref="webView"
+      class="ide-haskell-hoogle-web native-key-bindings"
+      src={this.props.url}
+      tabIndex="-1"
+      on={{
+        'dom-ready': this.setZoom,
+        'did-navigate': this.didNavigate,
+        'did-navigate-in-page': this.didNavigate,
+      }}
+    />)
   }
 }
