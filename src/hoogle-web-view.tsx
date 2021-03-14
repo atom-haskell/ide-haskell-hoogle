@@ -12,7 +12,7 @@ export class HoogleWebView implements ElementClass {
   private disposables = new CompositeDisposable()
   private zoomFactor = 100
   // tslint:disable-next-line: no-uninitialized
-  private refs: {
+  private refs!: {
     webView: Electron.WebViewElement
   }
   constructor(public props: IProps = {}) {
@@ -69,7 +69,7 @@ export class HoogleWebView implements ElementClass {
   }
 
   public getURI() {
-    return 'ide-haskell://hoogle/web/'
+    return `ide-haskell://hoogle/web/${this.props.url ?? ''}`
   }
 
   public getTitle() {

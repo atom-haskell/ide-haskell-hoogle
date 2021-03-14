@@ -65,7 +65,7 @@ async function reallyActivate(_state: never) {
       case 'doc':
         return createDocView()
       case 'web':
-        return createWebView()
+        return createWebView({url: m[2] || undefined})
     }
     return undefined
   }))

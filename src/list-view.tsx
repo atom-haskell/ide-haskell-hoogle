@@ -25,7 +25,7 @@ export async function selectListView(
           ) as HTMLElement,
         filterKeyForItem: (item) => item.signature,
         didCancelSelection: () => {
-          resolve()
+          resolve(undefined)
         },
         didConfirmSelection: (item) => {
           resolve(item)
