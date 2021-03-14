@@ -49,11 +49,12 @@ export class HoogleDocView implements ElementClass {
       <div class="ide-haskell-hoogle">
         <div
           style={this.style}
+          className="ide-haskell-hoogle-doc-header"
           innerHTML={hl(
             (this.props.symbol && this.props.symbol.signature) || '',
           )}
         />
-        <div>{hrefBtns}</div>
+        <div className="btn-group">{hrefBtns}</div>
         <div
           class="ide-haskell-hoogle-output editor editor-colors native-key-bindings"
           style={this.style}
