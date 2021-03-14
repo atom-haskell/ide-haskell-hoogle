@@ -1,3 +1,17 @@
+## 0.1.3
+
+-   Tweak styles
+-   Bump deps, cleanup, use fetch for requests (way faster)
+-   Use https as base-url
+-   Defer webview render until initial packages are activated
+-   Set webview background to white for compatibility
+-   Allow passing url as opener paremeter
+-   Add tslib
+-   Add license information to Readme
+-   Bump deps, typings
+-   Bump dependencies; formatting
+-   Added david-dm badge
+
 ## 0.1.2
 * Bump atom-list-view dependency
 * Guard against double activation
